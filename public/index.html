@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mashpi — מאגר משפיענים</title>
+  <meta name="description" content="מאגר משפיענים ויוצרי תוכן למשרדי פרסום וסוכנויות דיגיטל">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b4bdb'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3EM%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">M</span>
+      <div>
+        <strong>Mashpi</strong>
+        <small>מאגר משפיענים ויוצרי תוכן</small>
+      </div>
+    </div>
+    <div class="live" id="live" title="מצב חיבור לעדכונים בזמן אמת">
+      <span class="dot"></span><span id="live-text">מתחבר…</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn ghost" id="btn-import">ייבוא CSV</button>
+      <button class="btn primary" id="btn-add">+ הוספת משפיען</button>
+    </div>
+  </header>
+
+  <section class="stats" id="stats" aria-label="סטטיסטיקה"></section>
+
+  <section class="hero">
+    <form id="smart-form" class="smart" role="search">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.96 12.05l4.25 4.24-1.42 1.42-4.24-4.25A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
+      <input id="smart-input" type="search" autocomplete="off"
+             placeholder="תארו מה אתם מחפשים — למשל: משפיענית אמא מעל 50,000 עוקבים באינסטגרם">
+      <button class="btn primary" type="submit">חיפוש</button>
+    </form>
+    <div class="examples" id="examples"></div>
+  </section>
+
+  <main class="layout">
+    <aside class="filters" id="filters">
+      <button class="btn primary close-filters" id="btn-close-filters" type="button">הצגת תוצאות</button>
+      <div class="filters-head">
+        <h2>סינון</h2>
+        <button class="link" id="btn-clear" type="button">ניקוי הכל</button>
+      </div>
+
+      <label class="field">
+        <span>חיפוש חופשי</span>
+        <input id="f-q" type="text" placeholder="שם, שם משתמש, ביו…">
+      </label>
+
+      <fieldset class="field">
+        <legend>פלטפורמה</legend>
+        <div class="pills" id="f-platform"></div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>קטגוריה</legend>
+        <div class="pills" id="f-category"></div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>מגדר</legend>
+        <div class="segmented" id="f-gender">
+          <button type="button" data-value="" class="on">הכל</button>
+          <button type="button" data-value="female">נשים</button>
+          <button type="button" data-value="male">גברים</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>מספר עוקבים</legend>
+        <div class="pills" id="f-tier"></div>
+        <div class="range">
+          <input id="f-min" type="text" inputmode="numeric" placeholder="מינימום">
+          <span>–</span>
+          <input id="f-max" type="text" inputmode="numeric" placeholder="מקסימום">
+        </div>
+      </fieldset>
+
+      <div class="field-row">
+        <label class="field">
+          <span>מעורבות מינ׳ (%)</span>
+          <input id="f-eng" type="number" min="0" step="0.5" placeholder="למשל 3">
+        </label>
+        <label class="field">
+          <span>עיר / אזור</span>
+          <input id="f-city" type="text" placeholder="תל אביב">
+        </label>
+      </div>
+
+      <section class="feed">
+        <h3><span class="dot"></span> עדכונים בזמן אמת</h3>
+        <ol id="feed"><li class="muted">ממתין לעדכונים…</li></ol>
+      </section>
+    </aside>
+
+    <section class="results">
+      <div class="results-head">
+        <div>
+          <h2 id="results-count">טוען…</h2>
+          <div class="chips" id="active-chips"></div>
+        </div>
+        <div class="results-actions">
+          <label class="sort">
+            <span>מיון</span>
+            <select id="sort">
+              <option value="followers:desc">עוקבים — מהגבוה</option>
+              <option value="followers:asc">עוקבים — מהנמוך</option>
+              <option value="engagement:desc">מעורבות — מהגבוהה</option>
+              <option value="growth:desc">צמיחה ב-30 יום</option>
+              <option value="updated:desc">עודכנו לאחרונה</option>
+              <option value="name:asc">שם (א-ת)</option>
+            </select>
+          </label>
+          <button class="btn ghost" id="btn-filters" type="button">סינון</button>
+          <button class="btn ghost" id="btn-export" type="button">ייצוא לאקסל</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" id="table">
+          <thead>
+            <tr>
+              <th>משפיען</th>
+              <th>פלטפורמה</th>
+              <th class="num">עוקבים</th>
+              <th class="num">מעורבות</th>
+              <th>קטגוריות</th>
+              <th>עיר</th>
+              <th>עודכן</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden>
+          <strong>לא נמצאו משפיענים שתואמים לחיפוש</strong>
+          <span>נסו להרחיב את טווח העוקבים או להסיר חלק מהסינונים</span>
+        </div>
+      </div>
+      <nav class="pager" id="pager" aria-label="עמודים"></nav>
+    </section>
+  </main>
+
+  <!-- Detail drawer -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" aria-hidden="true"></aside>
+
+  <!-- Add / edit dialog -->
+  <dialog id="dlg-edit" class="dialog">
+    <form id="edit-form" method="dialog">
+      <header><h2 id="edit-title">הוספת משפיען</h2><button class="icon-btn" value="cancel" aria-label="סגירה">✕</button></header>
+      <div class="dialog-body">
+        <label class="field wide">
+          <span>לינק לפרופיל *</span>
+          <input name="profile_url" type="url" dir="ltr" placeholder="https://www.instagram.com/username" required>
+          <small class="hint" id="url-hint">מדביקים לינק — הפלטפורמה ושם המשתמש מזוהים אוטומטית</small>
+        </label>
+        <label class="field"><span>שם</span><input name="name" type="text"></label>
+        <label class="field"><span>מספר עוקבים</span><input name="followers" type="text" inputmode="numeric"></label>
+        <label class="field"><span>מעורבות (%)</span><input name="engagement_rate" type="number" step="0.01" min="0"></label>
+        <label class="field"><span>צפיות ממוצעות</span><input name="avg_views" type="text" inputmode="numeric"></label>
+        <label class="field">
+          <span>מגדר</span>
+          <select name="gender"><option value="">—</option><option value="female">אישה</option><option value="male">גבר</option><option value="other">אחר</option></select>
+        </label>
+        <label class="field"><span>עיר / אזור</span><input name="city" type="text"></label>
+        <fieldset class="field wide"><legend>קטגוריות</legend><div class="pills" id="edit-categories"></div></fieldset>
+        <label class="field"><span>אימייל ליצירת קשר</span><input name="contact_email" type="email" dir="ltr"></label>
+        <label class="field"><span>טלפון</span><input name="contact_phone" type="tel" dir="ltr"></label>
+        <label class="field wide"><span>ביו</span><textarea name="bio" rows="2"></textarea></label>
+        <label class="field wide"><span>הערות פנימיות</span><textarea name="notes" rows="2" placeholder="מחירון, ניסיון עבודה קודם, איש קשר…"></textarea></label>
+        <p class="form-error" id="edit-error" hidden></p>
+      </div>
+      <footer>
+        <button class="btn ghost" value="cancel" formnovalidate>ביטול</button>
+        <button class="btn primary" id="edit-submit" value="default">שמירה</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Import dialog -->
+  <dialog id="dlg-import" class="dialog">
+    <form id="import-form" method="dialog">
+      <header><h2>ייבוא משפיענים מקובץ CSV</h2><button class="icon-btn" value="cancel" aria-label="סגירה">✕</button></header>
+      <div class="dialog-body single">
+        <p>הקובץ צריך לכלול שורת כותרות. עמודות נתמכות (בעברית או באנגלית):</p>
+        <p class="mono">שם, לינק לפרופיל, עוקבים, קטגוריה, מגדר, עיר, מעורבות, אימייל, טלפון, הערות</p>
+        <p class="muted">משפיענים שכבר קיימים במאגר (לפי פלטפורמה + שם משתמש) יעודכנו. כמה קטגוריות מפרידים ב־|.</p>
+        <input type="file" id="import-file" accept=".csv,text/csv" required>
+        <div id="import-result"></div>
+      </div>
+      <footer>
+        <button class="btn ghost" value="cancel" formnovalidate>סגירה</button>
+        <button class="btn primary" id="import-submit" value="default">ייבוא</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
